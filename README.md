@@ -28,7 +28,6 @@ The script allows you to paste logs, alerts, IOC dumps, URLs, or any raw text di
 
 After the first check, you can continue working in interactive mode with commands such as:
 
-- `new` — analyze new text
 - `check` — re-check the last extracted IOC set
 - `bad_abuse` — show IPs with AbuseIPDB score >= 10
 - `ips` — show IP results again
