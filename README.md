@@ -1,55 +1,110 @@
 # SOC TI Checker
 
-SOC TI Checker is a lightweight console-based threat intelligence tool for SOC analysts.
+`SOC TI Checker` is a console-based threat intelligence enrichment tool for SOC workflows.
 
-The script allows you to paste logs, alerts, IOC dumps, URLs, or any raw text directly into the terminal. It automatically extracts public IPv4 addresses and URLs using regular expressions, then enriches them with data from multiple threat intelligence sources.
+The script accepts raw text, logs, alerts, IOC dumps, IP addresses, and URLs directly from the terminal. It automatically extracts public IPv4 addresses and URLs, checks them against multiple threat intelligence sources, and prints a readable summary for quick triage.
 
 ## Features
 
-- Automatic extraction of public IPv4 addresses from raw text
-- Automatic extraction of URLs from raw text
-- IP reputation checks across:
+- Extracts public IPv4 addresses from raw text
+- Extracts URLs from raw text
+- Checks IPs in:
   - VirusTotal
   - AbuseIPDB
   - AlienVault OTX
   - Shodan
-- URL reputation checks via VirusTotal
-- Fast console workflow: paste text, get results immediately
-- Additional commands for filtering and reviewing results
-- Quick list of IPs with `AbuseIPDB score >= 10` for blocklist workflows
-- Safe error handling with sanitized API error output
+- Checks URLs in VirusTotal
+- Supports direct terminal workflow without GUI
+- Accepts either commands or new text directly in the prompt
+- Provides a separate command for listing IPs with `AbuseIPDB score >= 10`
+- Hides API keys from printed HTTP error messages
 
-## Workflow
+## How It Works
 
 1. Run the script
-2. Paste logs, IOC dump, URL, or any text
-3. Press Enter on an empty line
-4. Get TI enrichment results immediately
+2. Paste text, logs, IPs, or URLs
+3. Press `Enter` on an empty line
+4. The script extracts IOC automatically and starts enrichment
+5. After the scan, you can enter either:
+   - commands such as `stats`, `ips`, `urls`, `bad_abuse`
+   - or new text / URL / IP directly in the `soc>` prompt
 
-After the first check, you can continue working in interactive mode with commands such as:
+## Supported Commands
 
-- `check` — re-check the last extracted IOC set
-- `bad_abuse` — show IPs with AbuseIPDB score >= 10
-- `ips` — show IP results again
-- `urls` — show URL results again
-- `stats` — show summary
-- `clear` — clear current session
-- `help` — show help
-- `exit` — quit
+- `check` - re-run checks for the last extracted IOC set
+- `bad_abuse` - show IPs with `AbuseIPDB score >= 10`
+- `urls` - print the latest URL results
+- `ips` - print the latest IP results
+- `stats` - show a short summary
+- `clear` - clear the current session
+- `help` - show available commands
+- `exit` - close the program
 
-## Environment Variables
+Any other text entered in the `soc>` prompt is treated as new input for analysis.
 
-Set your API keys before running the script:
+## Required API Keys
+
+The script reads API keys from environment variables:
 
 - `VT_API_KEY`
 - `ABUSEIPDB_API_KEY`
 - `OTX_API_KEY`
 - `SHODAN_API_KEY`
 
-## Use Cases
+PowerShell example:
 
-- IOC triage
-- SOC alert enrichment
-- Quick reputation checks from logs
-- Preparing suspicious IPs for blocking
-- Fast URL verification from incidents or phishing investigations
+```powershell
+$env:VT_API_KEY="your_virustotal_key"
+$env:ABUSEIPDB_API_KEY="your_abuseipdb_key"
+$env:OTX_API_KEY="your_otx_key"
+$env:SHODAN_API_KEY="your_shodan_key"
+```
+
+## Run
+
+```powershell
+python .\IP_checker.py
+```
+
+If `python` is not available in your terminal, use the Python launcher or the full path to your interpreter.
+
+## Example Workflow
+
+```text
+python .\IP_checker.py
+
+SOC TI Checker
+Сразу вставь текст. Когда закончишь, нажми Enter на пустой строке.
+
+Failed login from 8.8.8.8
+Suspicious callback to https://example.com/test
+
+```
+
+After that, the tool:
+
+- extracts the IP address
+- extracts the URL
+- checks them against TI sources
+- prints the results directly in the terminal
+
+Then you can continue with:
+
+```text
+soc> stats
+soc> bad_abuse
+soc> ips
+soc> https://example.org/login
+```
+
+## Typical Use Cases
+
+- IOC triage during incident response
+- Fast enrichment of suspicious IPs from logs
+- URL reputation checks during phishing analysis
+- Quick preparation of blocklists from AbuseIPDB results
+- Demonstrating practical SOC automation skills in a portfolio
+
+## File
+
+- [`IP_checker.py`](./IP_checker.py) - main console-based checker
