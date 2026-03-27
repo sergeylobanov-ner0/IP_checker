@@ -393,7 +393,6 @@ class SOCConsoleApp:
         if self.current_ips:
             print("\nПроверка завершена.")
             self.print_stats()
-            self.print_bad_abuse()
 
     def print_stats(self) -> None:
         print(f"Текущих IP: {len(self.current_ips)}")
